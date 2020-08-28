@@ -130,7 +130,7 @@ class Brush extends PureComponent<Props, State> {
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps: Props) {
-    const { data, width, x, travellerWidth, updateId } = this.props;
+    const { data, width, x, travellerWidth, updateId, startIndex, endIndex } = this.props;
 
     if (nextProps.data !== data || nextProps.updateId !== updateId) {
       if (nextProps.data && nextProps.data.length) {
@@ -144,12 +144,21 @@ class Brush extends PureComponent<Props, State> {
       nextProps.travellerWidth !== travellerWidth
     ) {
       this.scale.range([nextProps.x, nextProps.x + nextProps.width - nextProps.travellerWidth]);
-      this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+      this.scaleValues = this.scale.domain().map((entry) => this.scale(entry));
 
       this.setState({
         startX: this.scale(nextProps.startIndex),
         endX: this.scale(nextProps.endIndex),
       });
+    }
+    console.log('updating indexes');
+    if (nextProps.startIndex !== startIndex) {
+      console.log('updating startX');
+      this.setState({ startX: this.scale(nextProps.startIndex) });
+    }
+    if (nextProps.endIndex !== endIndex) {
+      console.log('updating endX');
+      this.setState({ endX: this.scale(nextProps.endIndex) });
     }
   }
 
@@ -359,7 +368,7 @@ class Brush extends PureComponent<Props, State> {
     this.scale = scalePoint<number>()
       .domain(_.range(0, len))
       .range([x, x + width - travellerWidth]);
-    this.scaleValues = this.scale.domain().map(entry => this.scale(entry));
+    this.scaleValues = this.scale.domain().map((entry) => this.scale(entry));
     return {
       isTextActive: false,
       isSlideMoving: false,
